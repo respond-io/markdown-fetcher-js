@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "clipboardy": "^5.0.2",
+    "commander": "^14.0.2",
+    "html-to-md": "^0.8.8",
+    "p-limit": "^7.2.0",
+    "playwright": "^1.57.0"
+  }
+}

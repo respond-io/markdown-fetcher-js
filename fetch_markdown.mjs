@@ -159,8 +159,8 @@ async function fetchContent(targetUrl, browser, counter, total) {
 
     // DOM cleaning logic
     await page.evaluate((isRedditFlag) => {
-      const redditSelectors = ['head', 'script', 'style', 'noscript', 'svg', 'reddit-header-large', 'flex-left-nav-container', '#right-sidebar-container', 'shreddit-async-loader', 'faceplate-loader', 'faceplate-partial', 'button', 'footer', '.legal-links', 'shreddit-comment-tree-ads', 'shreddit-dynamic-ad-link', '[slot="commentMeta"]', 'faceplate-timeago', 'shreddit-ad-post', '.promotedlink', 'faceplate-number', 'faceplate-tracker', '#shreddit-skip-link'];
-      const generalSelectors = ['nav', 'header', 'footer', 'script', 'style', 'noscript', 'svg', '.sidebar', '.ads', '.menu', 'img', 'button'];
+      const redditSelectors = ['head', 'script', 'style', 'svg', 'img', 'reddit-header-large', 'flex-left-nav-container', '#right-sidebar-container', 'shreddit-async-loader', 'faceplate-loader', 'faceplate-partial', 'button', 'footer', '.legal-links', 'shreddit-comment-tree-ads', 'shreddit-dynamic-ad-link', '[slot="commentMeta"]', 'faceplate-timeago', 'shreddit-ad-post', '.promotedlink', 'faceplate-number', 'faceplate-tracker', '#shreddit-skip-link'];
+      const generalSelectors = ['nav', 'header', 'footer', 'script', 'style', '.sidebar', '.ads', '.menu', 'img', 'svg', 'button', 'picture', 'video', 'audio', 'source', 'track', 'canvas'];
       const selectors = isRedditFlag ? redditSelectors : generalSelectors;
 
       const clean = (root) => {

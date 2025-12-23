@@ -80,7 +80,7 @@ program
   .description('Scrape URLs and convert them to Markdown (Parallel)')
   .argument('[urls...]', 'List of URLs to scrape')
   .option('-o, --output <file>', 'File to save the results to (optional)')
-  .option('-c, --clipboard', 'Copy the final output to clipboard', false)
+  .option('-c, --clipboard', 'Copy the final output to clipboard', true)
   .option('-p, --parallel <number>', 'Maximum parallel pages', '5')
   .parse(process.argv);
 

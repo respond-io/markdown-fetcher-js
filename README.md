@@ -1,21 +1,17 @@
 # Fetch Markdown
 
 ## Purpose
-This script is designed to fetch the content of one or more URLs, with special handling for Reddit, and convert it into a clean Markdown format. It is useful for extracting content for LLM processing.
+This script is designed to fetch the content of one or more URLs, with special handling for Reddit, and convert it into Markdown format. It is useful for extracting content for LLM processing.
 
 ## Approach
 The script uses **Playwright** to launch a headless Chromium browser instance, and opens the target URLs concurrently (controlled by `p-limit`).
 
-It scrolls the page to trigger lazy-loaded content, and cleans the DOM, removing scripts, styles, ads, navigation bars, and other non-content elements before conversion. It uses `html-to-md` to convert the cleaned HTML body into Markdown.
+It scrolls the page to trigger lazy-loaded content, and cleans the DOM, removing scripts, styles, etc. before conversion. It uses `html-to-md` to convert the cleaned HTML body into Markdown.
 
-If the URL is from Reddit, it performs specialized actions to expand "View more comments" buttons and nested replies to capture the full discussion.
+If the URL is from Reddit, it performs specialized actions to expand "View more comments" buttons and nested replies to capture the full discussion content.
 
 ## Dependency Installation
-To run this script, you need to install the required Node.js dependencies:
-
-```bash
-npm install commander playwright clipboardy html-to-md p-limit
-```
+To run this script, you need to `npm install` the required Node.js dependencies: `playwright`, `commander`, `clipboardy`, `html-to-md`, and `p-limit`
 
 ## General Usage
 
@@ -28,10 +24,6 @@ You can pass one or more URLs directly as arguments:
 
 ### Interactive Mode
 If no URLs are provided, the script runs in interactive mode. You can enter URLs (one per line) and press `Ctrl+D` when finished:
-
-```bash
-./fetch_markdown.mjs
-```
 
 ### Options
 - `-o, --output <file>`: Specify output file (default: `~/Downloads/markdown_TIMESTAMP.md`)

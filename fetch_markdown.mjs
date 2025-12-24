@@ -11,7 +11,7 @@
 
 /**
  * DEPENDENCIES:
- *    npm install commander playwright clipboardy html-to-md p-limit
+ *    npm install commander playwright clipboardy html-to-md p-limit @ghostery/adblocker-playwright
  */
 
 import fs from 'fs';
@@ -23,6 +23,7 @@ import { chromium } from 'playwright';
 import clipboard from 'clipboardy';
 import html2md from 'html-to-md';
 import pLimit from 'p-limit';
+import { PlaywrightBlocker } from '@ghostery/adblocker-playwright';
 
 // -----------------------
 // Config (Colors)
@@ -91,13 +92,16 @@ const argOutputFile = options.output;
 // -----------------------
 // Scraper Engine
 // -----------------------
-async function fetchContent(targetUrl, browser, counter, total) {
+async function fetchContent(targetUrl, browser, blocker, counter, total) {
   process.stderr.write(`${BLUE}[${counter}/${total}]${NC} Starting: ${GREEN}${targetUrl}${NC}\n`);
   
   const context = await browser.newContext({
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
   });
   const page = await context.newPage();
+  
+  // Enable adblocker on the page
+  await blocker.enableBlockingInPage(page);
 
   try {
     const isReddit = targetUrl.includes('reddit.com');
@@ -196,8 +200,12 @@ async function fetchContent(targetUrl, browser, counter, total) {
   }
 
   const browser = await chromium.launch({ headless: true });
+  
+  // Initialize the adblocker
+  const blocker = await PlaywrightBlocker.fromPrebuiltAdsAndTracking(fetch);
+  
   const limit = pLimit(parseInt(options.parallel || '5'));
-  const tasks = finalUrls.map((u, i) => limit(() => fetchContent(u, browser, i + 1, finalUrls.length)));
+  const tasks = finalUrls.map((u, i) => limit(() => fetchContent(u, browser, blocker, i + 1, finalUrls.length)));
   const results = await Promise.all(tasks);
   await browser.close();
 

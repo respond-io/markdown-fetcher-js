@@ -92,7 +92,7 @@ const argOutputFile = options.output;
 // -----------------------
 // Scraper Engine
 // -----------------------
-async function fetchContent(targetUrl, browser, counter, total) {
+async function fetchContent(targetUrl, browser, blocker, counter, total) {
   process.stderr.write(`${BLUE}[${counter}/${total}]${NC} Starting: ${GREEN}${targetUrl}${NC}\n`);
   
   const context = await browser.newContext({
@@ -100,9 +100,10 @@ async function fetchContent(targetUrl, browser, counter, total) {
   });
   const page = await context.newPage();
 
-  // Initialize and enable adblocker
-  const blocker = await PlaywrightBlocker.fromPrebuiltAdsAndTracking(fetch);
-  await blocker.enableBlockingInPage(page);
+  // Enable adblocker for this page
+  if (blocker) {
+    await blocker.enableBlockingInPage(page);
+  }
 
   try {
     const isReddit = targetUrl.includes('reddit.com');
@@ -200,9 +201,18 @@ async function fetchContent(targetUrl, browser, counter, total) {
     process.exit(1);
   }
 
+  // Initialize adblocker once for all pages
+  let blocker = null;
+  try {
+    blocker = await PlaywrightBlocker.fromPrebuiltAdsAndTracking(fetch);
+    process.stderr.write(`${GREEN}✔ Adblocker initialized${NC}\n`);
+  } catch (err) {
+    process.stderr.write(`${YELLOW}⚠ Warning: Failed to initialize adblocker (${err.message}). Continuing without ad blocking.${NC}\n`);
+  }
+
   const browser = await chromium.launch({ headless: true });
   const limit = pLimit(parseInt(options.parallel || '5'));
-  const tasks = finalUrls.map((u, i) => limit(() => fetchContent(u, browser, i + 1, finalUrls.length)));
+  const tasks = finalUrls.map((u, i) => limit(() => fetchContent(u, browser, blocker, i + 1, finalUrls.length)));
   const results = await Promise.all(tasks);
   await browser.close();
 

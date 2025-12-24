@@ -11,7 +11,7 @@
 
 /**
  * DEPENDENCIES:
- *    npm install commander playwright clipboardy html-to-md p-limit
+ *    npm install commander playwright clipboardy html-to-md p-limit @ghostery/adblocker-playwright
  */
 
 import fs from 'fs';
@@ -23,6 +23,7 @@ import { chromium } from 'playwright';
 import clipboard from 'clipboardy';
 import html2md from 'html-to-md';
 import pLimit from 'p-limit';
+import { PlaywrightBlocker } from '@ghostery/adblocker-playwright';
 
 // -----------------------
 // Config (Colors)
@@ -98,6 +99,10 @@ async function fetchContent(targetUrl, browser, counter, total) {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
   });
   const page = await context.newPage();
+
+  // Initialize and enable adblocker
+  const blocker = await PlaywrightBlocker.fromPrebuiltAdsAndTracking(fetch);
+  await blocker.enableBlockingInPage(page);
 
   try {
     const isReddit = targetUrl.includes('reddit.com');

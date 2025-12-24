@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@ghostery/adblocker-playwright": "^2.13.2",
     "clipboardy": "^5.0.2",
     "commander": "^14.0.2",
     "html-to-md": "^0.8.8",
